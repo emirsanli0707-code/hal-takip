@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="tr">
 <head>
@@ -6,35 +7,61 @@
 <meta name="theme-color" content="#176b4d">
 <title>Hal Ürün Takip PRO</title>
 <style>
-:root{--green:#176b4d;--green2:#e8f5ee;--ink:#17231d;--muted:#68766e;--line:#dfe8e2;--bg:#f5f8f6;--white:#fff;--red:#b42318;--gold:#fff4d6}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+:root{--green:#176b4d;--green2:#e8f5ee;--ink:#17231d;--muted:#68766e;--line:#dfe8e2;--bg:#f5f8f6;--white:#fff;--red:#b42318;--gold:#fff4d6;--accent:#10b981}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;padding-bottom:70px}
 header{background:var(--green);color:white;padding:20px 16px 22px;border-radius:0 0 22px 22px}
 .wrap{max-width:820px;margin:0 auto;padding:0 14px}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .top-left{display:flex;align-items:center;gap:12px}
 .logo{font-size:30px;background:#ffffff20;border-radius:14px;padding:9px}
-h1{font-size:21px;margin:0}header p{margin:4px 0 0;color:#e1f3e8;font-size:13px}
-.hal-btn{background:#ffffff25;color:white;border:1px solid #ffffff40;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
-.hal-btn:hover{background:#ffffff35}
-main{padding:16px 0 36px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+h1{font-size:21px;margin:0}
+header p{margin:4px 0 0;color:#e1f3e8;font-size:13px}
+main{padding:16px 0 36px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
 .stat,.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 2px 8px #193b2510}
-.stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.stat strong{font-size:18px;overflow-wrap:anywhere}
-.panel{margin-bottom:14px}.panel h2{font-size:18px;margin:0 0 13px}
+.stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+.stat strong{font-size:18px;overflow-wrap:anywhere}
+.panel{margin-bottom:14px}
+.panel h2{font-size:18px;margin:0 0 13px;display:flex;align-items:center;gap:8px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field.full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.full{grid-column:1/-1}
 label{font-size:13px;font-weight:650;color:#3f5046}
 input,textarea,select{font:inherit;width:100%;border:1px solid #cbd8cf;border-radius:10px;background:#fff;padding:11px 10px;color:var(--ink);min-height:44px}
 textarea{min-height:72px;resize:vertical}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 button{font:inherit;border:0;border-radius:11px;padding:11px 14px;font-weight:700;cursor:pointer;min-height:44px}
-.primary{background:var(--green);color:white;flex:1}.secondary{background:var(--green2);color:var(--green)}.danger{background:#fff0ee;color:var(--red)}.small{padding:7px 10px;min-height:36px;font-size:13px}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.toolbar input{flex:1;min-width:140px}
-.records{display:flex;flex-direction:column;gap:10px}.record{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fff}
-.record-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.product{font-weight:800;font-size:17px}.date{font-size:12px;color:var(--muted);margin-top:2px}
-.amount{font-weight:800;color:var(--green);white-space:nowrap;text-align:right}.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
-.detail{background:#f7faf8;padding:8px;border-radius:9px}.detail span{display:block;color:var(--muted);font-size:11px}.detail strong{font-size:13px;overflow-wrap:anywhere}
-.record-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:10px}.empty{text-align:center;padding:26px 12px;color:var(--muted)}
-.note{font-size:12px;color:var(--muted);margin:8px 2px 0}.status{font-size:12px;color:var(--green);min-height:17px;margin-top:8px}
+.primary{background:var(--green);color:white;flex:1}
+.secondary{background:var(--green2);color:var(--green)}
+.danger{background:#fff0ee;color:var(--red)}
+.small{padding:7px 10px;min-height:36px;font-size:13px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input{flex:1;min-width:140px}
+.records{display:flex;flex-direction:column;gap:10px}
+.record{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fff}
+.record-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.product{font-weight:800;font-size:17px}
+.date{font-size:12px;color:var(--muted);margin-top:2px}
+.amount{font-weight:800;color:var(--green);white-space:nowrap;text-align:right}
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.detail{background:#f7faf8;padding:8px;border-radius:9px}
+.detail span{display:block;color:var(--muted);font-size:11px}
+.detail strong{font-size:13px;overflow-wrap:anywhere}
+.record-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:10px}
+.empty{text-align:center;padding:26px 12px;color:var(--muted)}
+.status{font-size:12px;color:var(--green);min-height:17px;margin-top:8px}
+
+/* Referans Fiyatlar Alt Paneli */
+.ref-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:10px}
+.ref-card{background:var(--green2);border:1px solid #c0e0d0;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:4px}
+.ref-card span{font-size:12px;font-weight:600;color:var(--green)}
+.ref-card input{padding:4px 8px;min-height:32px;font-size:14px;border-color:#a5d3bc}
+
+/* Alt Sabit Hızlı Erişim Barı */
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:var(--green);padding:10px 16px;box-shadow:0 -2px 10px rgba(0,0,0,0.15);z-index:99;display:flex;justify-content:center}
+.bottom-bar a{background:#ffffff;color:var(--green);text-decoration:none;padding:10px 20px;border-radius:20px;font-weight:800;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}
+
 footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 0 20px}
 @media(min-width:650px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.details{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
@@ -50,24 +77,35 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 0 20px}
           <p>Ürün, kilo, fiyat ve net kazanç takibi</p>
         </div>
       </div>
-      <a class="hal-btn" href="https://gazipasa.bel.tr/gunluk-hal-fiyatlari" target="_blank" rel="noopener">Gazipaşa Hal Fiyatları ↗</a>
     </div>
   </div>
 </header>
+
 <main class="wrap">
+  <!-- Özet Kartları -->
   <section class="stats">
     <div class="stat"><span>Toplam gönderi</span><strong id="sCount">0</strong></div>
     <div class="stat"><span>Toplam kilo</span><strong id="sKg">0 kg</strong></div>
     <div class="stat"><span>Brüt tutar</span><strong id="sGross">₺0,00</strong></div>
     <div class="stat"><span>Net kazanç</span><strong id="sNet">₺0,00</strong></div>
   </section>
+
+  <!-- Yeni Gönderi Formu -->
   <section class="panel" id="formPanel">
     <h2 id="formTitle">＋ Yeni ürün gönderisi ekle</h2>
     <form id="entryForm">
       <input type="hidden" id="editId">
       <div class="grid">
         <div class="field"><label for="date">Gönderim tarihi *</label><input id="date" type="date" required></div>
-        <div class="field"><label for="product">Ürün adı *</label><input id="product" placeholder="Örn. Domates, Muz, Avokado" list="products" required><datalist id="products"><option>Domates</option><option>Salatalık</option><option>Sivri Biber</option><option>Kapya Biber</option><option>Patlıcan</option><option>Kabak</option><option>Yerli Muz</option><option>Avokado</option><option>Limon</option><option>Nar</option></datalist></div>
+        <div class="field">
+          <label for="product">Ürün adı *</label>
+          <input id="product" placeholder="Örn. Domates, Muz" list="products" required>
+          <datalist id="products">
+            <option>Domates</option><option>Salatalık</option><option>Sivri Biber</option>
+            <option>Kapya Biber</option><option>Patlıcan</option><option>Kabak</option>
+            <option>Yerli Muz</option><option>Avokado</option><option>Limon</option><option>Nar</option>
+          </datalist>
+        </div>
         <div class="field"><label for="kg">Gönderilen kilo (kg) *</label><input id="kg" type="number" min="0" step="0.01" placeholder="Örn. 250" required></div>
         <div class="field"><label for="price">Kg fiyatı (₺) *</label><input id="price" type="number" min="0" step="0.01" placeholder="Örn. 18,50" required></div>
         <div class="field"><label for="crates">Kasa / Ambalaj Adedi</label><input id="crates" type="number" min="0" placeholder="Örn. 15 kasa"></div>
@@ -75,30 +113,91 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 0 20px}
         <div class="field full"><label for="buyer">Alıcı / Komisyoncu</label><input id="buyer" placeholder="Firma veya kişi adı"></div>
         <div class="field full"><label for="notes">Notlar</label><textarea id="notes" placeholder="Kalite, ödeme durumu vb..."></textarea></div>
       </div>
-      <div class="actions"><button class="primary" type="submit" id="saveBtn">Kaydı ekle</button><button class="secondary" type="button" id="cancelEdit" hidden>Vazgeç</button></div>
+      <div class="actions">
+        <button class="primary" type="submit" id="saveBtn">Kaydı ekle</button>
+        <button class="secondary" type="button" id="cancelEdit" hidden>Vazgeç</button>
+      </div>
       <div class="status" id="status" aria-live="polite"></div>
     </form>
   </section>
+
+  <!-- Kayıtlar Listesi -->
   <section class="panel">
     <h2>📒 Kayıtlarım</h2>
-    <div class="toolbar"><input id="search" placeholder="Ürün, alıcı veya not ara…"><input id="month" type="month" aria-label="Aya göre filtrele"><button class="secondary" id="clearFilters" type="button">Filtreyi temizle</button></div>
-    <div class="actions" style="margin-top:0;margin-bottom:12px"><button class="secondary" id="exportCsv" type="button">⬇ Excel/CSV</button><button class="secondary" id="backup" type="button">Yedek (JSON)</button><label class="secondary" style="display:inline-flex;align-items:center;justify-content:center;border-radius:11px;padding:10px 14px;font-weight:700;cursor:pointer">Yükle<input id="restore" type="file" accept=".json,application/json" hidden></label><button class="danger small" id="clearAll" type="button" style="margin-left:auto">Tümünü Sil</button></div>
+    <div class="toolbar">
+      <input id="search" placeholder="Ürün, alıcı veya not ara…">
+      <input id="month" type="month" aria-label="Aya göre filtrele">
+      <button class="secondary" id="clearFilters" type="button">Filtreyi temizle</button>
+    </div>
+    <div class="actions" style="margin-top:0;margin-bottom:12px">
+      <button class="secondary" id="exportCsv" type="button">⬇ Excel/CSV</button>
+      <button class="secondary" id="backup" type="button">Yedek (JSON)</button>
+      <label class="secondary" style="display:inline-flex;align-items:center;justify-content:center;border-radius:11px;padding:10px 14px;font-weight:700;cursor:pointer">Yükle<input id="restore" type="file" accept=".json,application/json" hidden></label>
+      <button class="danger small" id="clearAll" type="button" style="margin-left:auto">Tümünü Sil</button>
+    </div>
     <div id="records" class="records"><div class="empty">Henüz eklenmiş bir kayıt bulunmuyor.</div></div>
   </section>
+
+  <!-- Günlük Referans Hal Fiyatları Paneli -->
+  <section class="panel">
+    <h2>📊 Günün Referans Hal Fiyatları</h2>
+    <p style="font-size:12px;color:var(--muted);margin:-6px 0 10px">Aşağıya belirlediğin fiyatlar, ürün seçtiğinde kg fiyatı kutusuna otomatik aktarılır.</p>
+    <div class="ref-grid" id="refGrid"></div>
+  </section>
+
   <footer>Veriler sadece bu cihazda saklanır. Düzenli olarak yedek almayı unutmayın.</footer>
 </main>
+
+<!-- Alt Sabit Buton -->
+<div class="bottom-bar">
+  <a href="https://gazipasa.bel.tr/gunluk-hal-fiyatlari" target="_blank" rel="noopener">
+    🌐 Gazipaşa Belediyesi Hal Fiyatları ↗
+  </a>
+</div>
+
 <script>
 (() => {
  const KEY='halUrunTakip_v2';
+ const REF_KEY='halRefFiyatlar_v1';
  const $=id=>document.getElementById(id);
  const fmt=n=>new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY'}).format(Number(n)||0);
  const num=n=>new Intl.NumberFormat('tr-TR',{maximumFractionDigits:2}).format(Number(n)||0);
  const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+
  let items=[];
+ let refPrices={ Domates:'', Salatalık:'', 'Sivri Biber':'', 'Kapya Biber':'', Patlıcan:'', Kabak:'', 'Yerli Muz':'', Avokado:'', Limon:'', Nar:'' };
+
  try { items=JSON.parse(localStorage.getItem(KEY)||'[]'); if(!Array.isArray(items))items=[]; } catch(e){items=[]}
+ try { const savedRef=JSON.parse(localStorage.getItem(REF_KEY)); if(savedRef) Object.assign(refPrices, savedRef); } catch(e){}
+
  $('date').value=today();
- function persist(){try{localStorage.setItem(KEY,JSON.stringify(items));$('status').textContent='';return true}catch(e){alert('Kayıt alanı dolu olabilir.');return false}}
+
+ function persist(){try{localStorage.setItem(KEY,JSON.stringify(items));$('status').textContent='';return true}catch(e){alert('Kayıt alanı dolu.');return false}}
+ function persistRef(){try{localStorage.setItem(REF_KEY,JSON.stringify(refPrices));}catch(e){}}
+
  function totals(list){return list.reduce((a,x)=>{let gross=(+x.kg||0)*(+x.price||0);a.kg+=(+x.kg||0);a.gross+=gross;a.cost+=(+x.cost||0);a.net+=gross-(+x.cost||0);return a},{kg:0,gross:0,cost:0,net:0})}
+
+ function renderRefGrid(){
+   const root=$('refGrid');
+   root.innerHTML='';
+   Object.keys(refPrices).forEach(prod=>{
+     const card=document.createElement('div');card.className='ref-card';
+     const span=document.createElement('span');span.textContent=prod;
+     const input=document.createElement('input');input.type='number';input.placeholder='₺/kg';input.value=refPrices[prod]||'';
+     input.oninput=e=>{ refPrices[prod]=e.target.value; persistRef(); };
+     card.append(span,input);
+     root.append(card);
+   });
+ }
+
+ // Ürün seçilince fiyatı otomatik tamamla
+ $('product').addEventListener('input', e=>{
+   const val=e.target.value.trim();
+   if(refPrices[val] && !$('price').value){
+     $('price').value=refPrices[val];
+   }
+ });
+
  function render(){
    const t=totals(items);$('sCount').textContent=items.length;$('sKg').textContent=num(t.kg)+' kg';$('sGross').textContent=fmt(t.gross);$('sNet').textContent=fmt(t.net);
    const q=$('search').value.trim().toLocaleLowerCase('tr-TR'),m=$('month').value;
@@ -124,19 +223,25 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 0 20px}
      acts.append(edit,del);card.append(acts);root.append(card);
    })
  }
- function resetForm(){ $('entryForm').reset();$('editId').value='';$('date').value=today();$('formTitle').textContent='＋ Yeni ürün gönderisi ekle';$('saveBtn').textContent='Kaydı ekle';$('cancelEdit').hidden=true}$('entryForm').addEventListener('submit',e=>{
+
+ function resetForm(){ $('entryForm').reset();$('editId').value='';$('date').value=today();$('formTitle').textContent='＋ Yeni ürün gönderisi ekle';$('saveBtn').textContent='Kaydı ekle';$('cancelEdit').hidden=true}
+ $('entryForm').addEventListener('submit',e=>{
    e.preventDefault();
    const id=$('editId').value;
-   const data={date:$('date').value,product:$('product').value.trim(),kg:Number($('kg').value),price:Number($('price').value),crates:Number($('crates').value\vert{}\vert{}0),cost:Number($('cost').value||0),buyer:$('buyer').value.trim(),notes:$('notes').value.trim()};
+   const data={date:$('date').value,product:$('product').value.trim(),kg:Number($('kg').value),price:Number($('price').value),crates:Number($('crates').value||0),cost:Number($('cost').value||0),buyer:$('buyer').value.trim(),notes:$('notes').value.trim()};
    if(!data.date||!data.product||data.kg<0||data.price<0||data.cost<0){alert('Lütfen alanları kontrol edin.');return}
    if(id){const i=items.findIndex(x=>x.id===id);if(i>=0)items[i]={...items[i],...data};}
    else items.push({...data,id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),created:Date.now()});
    if(persist()){resetForm();render();$('status').textContent=id?'Kayıt güncellendi.':'Kayıt eklendi.';window.scrollTo({top:0,behavior:'smooth'})}
  });
+
  function beginEdit(id){const x=items.find(a=>a.id===id);if(!x)return;$('editId').value=x.id;['date','product','kg','price','crates','cost','buyer','notes'].forEach(k=>$(k).value=x[k]??'');$('formTitle').textContent='✎ Kaydı düzenle';$('saveBtn').textContent='Değişiklikleri kaydet';$('cancelEdit').hidden=false;$('formPanel').scrollIntoView({behavior:'smooth',block:'start'})}
  function removeItem(id){const x=items.find(a=>a.id===id);if(!x)return;if(confirm(`“${x.product}” silinsin mi?`)){items=items.filter(a=>a.id!==id);persist();render()}}
+
  $('clearAll').onclick=()=>{if(items.length&&confirm('Tüm kayıtlar silinecek. Emin misin?')){items=[];persist();render()}};
- $('cancelEdit').onclick=resetForm;$('search').addEventListener('input',render);$('month').addEventListener('change',render);$('clearFilters').onclick=()=>{$('search').value='';$('month').value='';render()};
+ $('cancelEdit').onclick=resetForm;$('search').addEventListener('input',render);$('month').addEventListener('change',render);
+ $('clearFilters').onclick=()=>{$('search').value='';$('month').value='';render()};
+
  function download(name,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
  $('exportCsv').onclick=()=>{
   const headers=['Tarih','Ürün Adı','Kilo (kg)','Kg Fiyatı (₺)','Brüt Tutar (₺)','Kasa','Komisyon/Masraf (₺)','Net Tutar (₺)','Alıcı','Notlar'];
@@ -144,9 +249,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:8px 0 20px}
   const esc=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   download('hal-urun-kayitlari.csv','\ufeff'+[headers,...rows].map(r=>r.map(esc).join(';')).join('\r\n'),'text/csv;charset=utf-8');
  };
- $('backup').onclick=()=>download('hal-urun-yedek-'+today()+'.json',JSON.stringify(items,null,2),'application/json');$('restore').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const incoming=JSON.parse(await file.text());if(!Array.isArray(incoming))throw Error();if(confirm('Yedek yüklensin mi?')){const map=new Map(items.map(x=>[x.id,x]));incoming.forEach(x=>map.set(x.id,x));items=[...map.values()];persist();render();alert('Yedek yüklendi.')}}catch(err){alert('Geçersiz yedek dosyası.')}e.target.value=''};
+ $('backup').onclick=()=>download('hal-urun-yedek-'+today()+'.json',JSON.stringify(items,null,2),'application/json');
+ $('restore').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const incoming=JSON.parse(await file.text());if(!Array.isArray(incoming))throw Error();if(confirm('Yedek yüklensin mi?')){const map=new Map(items.map(x=>[x.id,x]));incoming.forEach(x=>map.set(x.id,x));items=[...map.values()];persist();render();alert('Yedek yüklendi.')}}catch(err){alert('Geçersiz yedek dosyası.')}e.target.value=''};
+
+ renderRefGrid();
  render();
 })();
 </script>
 </body>
 </html>
+```
