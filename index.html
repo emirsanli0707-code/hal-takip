@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="tr" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hal Ürün Takip Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Print Styling */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .print-card {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                color: black !important;
+                background: white !important;
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Top Navigation -->
+    <header class="no-print bg-slate-800/80 backdrop-blur border-b border-slate-700/60 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
+                    <i data-lucide="truck" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-white flex items-center gap-2">
+                        Hal Ürün Takip <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2 py-0.5 rounded-full border border-emerald-500/20 font-medium">PRO</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Hal Gönderim & Muhasebe Yönetimi</p>
+                </div>
+            </div>
+
+            <!-- Header Quick Actions -->
+            <div class="flex items-center gap-2">
+                <button onclick="exportJSON()" title="Yedek İndir (JSON)" class="p-2 text-slate-400 hover:text-white hover:bg-slate-700/60 rounded-lg transition-colors text-xs flex items-center gap-1.5 border border-slate-700">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Yedek Al</span>
+                </button>
+                <label title="Yedek Yükle (JSON)" class="p-2 text-slate-400 hover:text-white hover:bg-slate-700/60 rounded-lg transition-colors text-xs flex items-center gap-1.5 border border-slate-700 cursor-pointer">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Yükle</span>
+                    <input type="file" id="jsonInput" accept=".json" onchange="importJSON(event)" class="hidden">
+                </label>
+                <button onclick="exportCSV()" title="Excel / CSV İndir" class="p-2 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-950/40 rounded-lg transition-colors text-xs flex items-center gap-1.5 border border-emerald-800/60">
+                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Excel</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Body Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Notification Toast -->
+        <div id="toast" class="hidden fixed bottom-5 right-5 z-50 bg-slate-800 border border-emerald-500/40 text-emerald-300 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all transform translate-y-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+            <span id="toastMsg" class="text-sm font-medium">İşlem başarılı</span>
+        </div>
+
+        <!-- Dashboard / Summary Stats -->
+        <section class="no-print grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            <!-- Total Shipments -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-600 transition-colors">
+                <div class="flex justify-between items-start text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Top. Gönderi</span>
+                    <i data-lucide="package" class="w-4 h-4 text-slate-400"></i>
+                </div>
+                <div>
+                    <div id="statTotalCount" class="text-2xl font-bold text-white">0</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Adet Kayıt</div>
+                </div>
+            </div>
+
+            <!-- Total Weight -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-600 transition-colors">
+                <div class="flex justify-between items-start text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Top. Miktar</span>
+                    <i data-lucide="scale" class="w-4 h-4 text-cyan-400"></i>
+                </div>
+                <div>
+                    <div id="statTotalWeight" class="text-2xl font-bold text-cyan-400">0 Kg</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Toplam Tonaj</div>
+                </div>
+            </div>
+
+            <!-- Gross Revenue -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-600 transition-colors">
+                <div class="flex justify-between items-start text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Brüt Tutar</span>
+                    <i data-lucide="coins" class="w-4 h-4 text-amber-400"></i>
+                </div>
+                <div>
+                    <div id="statGrossTotal" class="text-2xl font-bold text-amber-400">₺0,00</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Ham Satış Toplamı</div>
+                </div>
+            </div>
+
+            <!-- Deductions -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 flex flex-col justify-between hover:border-slate-600 transition-colors">
+                <div class="flex justify-between items-start text-slate-400 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Kesintiler</span>
+                    <i data-lucide="trending-down" class="w-4 h-4 text-rose-400"></i>
+                </div>
+                <div>
+                    <div id="statDeductions" class="text-2xl font-bold text-rose-400">₺0,00</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">Komisyon/Nakliye/KDV</div>
+                </div>
+            </div>
+
+            <!-- Net Revenue -->
+            <div class="col-span-2 sm:col-span-1 bg-gradient-to-br from-emerald-950/40 to-slate-800/80 border border-emerald-500/30 rounded-2xl p-4 flex flex-col justify-between hover:border-emerald-500/50 transition-colors">
+                <div class="flex justify-between items-start text-emerald-400 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">Net Alacak</span>
+                    <i data-lucide="wallet" class="w-4 h-4 text-emerald-400"></i>
+                </div>
+                <div>
+                    <div id="statNetTotal" class="text-2xl font-extrabold text-emerald-400">₺0,00</div>
+                    <div class="text-[11px] text-emerald-300/70 mt-0.5">Ele Geçecek Tutar</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Shipment Form -->
+        <section class="no-print bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-700/60 pb-3">
+                <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-emerald-400"></i>
+                    Yeni Hal Gönderimi Ekle
+                </h2>
+                <span class="text-xs text-slate-400">* işaretli alanlar zorunludur</span>
+            </div>
+
+            <form id="shipmentForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                <input type="hidden" id="editIndex" value="-1">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Date -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Tarih *</label>
+                        <input type="date" id="formDate" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Receiver/Broker -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Alıcı / Komisyoncu *</label>
+                        <input type="text" id="formBroker" placeholder="Örn: Hal Ticaret - Ahmet Bey" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Product Name -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Ürün Cinsi / Adı *</label>
+                        <input type="text" id="formProduct" placeholder="Örn: Domates, Salatalık" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Crate Count -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Kasa / Ambalaj Sayısı</label>
+                        <input type="number" id="formCrates" placeholder="0" min="0" step="1" oninput="calculateLivePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Weight (Kg) -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Net Kilo (KG) *</label>
+                        <input type="number" id="formWeight" placeholder="0.00" min="0" step="0.01" required oninput="calculateLivePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Price per Kg -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Birim Fiyat (₺/KG) *</label>
+                        <input type="number" id="formPrice" placeholder="0.00" min="0" step="0.01" required oninput="calculateLivePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Commission / Expense -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Komisyon / Masraf (₺)</label>
+                        <input type="number" id="formExpense" placeholder="0.00" min="0" step="0.01" oninput="calculateLivePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Transport / Freight Cost -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Nakliye / Hamaliye (₺)</label>
+                        <input type="number" id="formTransport" placeholder="0.00" min="0" step="0.01" oninput="calculateLivePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Stoppage Tax % -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Stopaj Kesintisi (%)</label>
+                        <input type="number" id="formStopaj" placeholder="0" min="0" max="100" step="0.1" oninput="calculateLivePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- KDV Tax % -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">KDV Oranı (%)</label>
+                        <input type="number" id="formKdv" placeholder="0" min="0" max="100" step="0.1" oninput="calculateLivePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Not / Açıklama</label>
+                        <input type="text" id="formNotes" placeholder="Plaka, fiş no veya ek bilgiler" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+                    </div>
+                </div>
+
+                <!-- Live Calculated Calculation Preview Banner -->
+                <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <span class="text-slate-500 block">Hesaplanan Brüt</span>
+                            <span id="previewGross" class="text-sm font-semibold text-slate-200">₺0,00</span>
+                        </div>
+                        <div class="text-slate-600">|</div>
+                        <div>
+                            <span class="text-slate-500 block">Top. Kesinti</span>
+                            <span id="previewDeduction" class="text-sm font-semibold text-rose-400">₺0,00</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <span class="text-slate-400 font-medium block">Net Tutar</span>
+                            <span id="previewNet" class="text-base font-bold text-emerald-400">₺0,00</span>
+                        </div>
+                        <button type="submit" id="submitBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span id="submitBtnText">Kaydet</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- Search, Filters and Export Controls -->
+        <section class="no-print flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-800/40 p-3 rounded-2xl border border-slate-700/40">
+            <!-- Search -->
+            <div class="relative w-full sm:w-72">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="renderTable()" placeholder="Ürün veya Alıcı Ara..." class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+            </div>
+
+            <!-- Filters -->
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <select id="monthFilter" onchange="renderTable()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 transition-colors flex-1 sm:flex-none">
+                    <option value="ALL">Tüm Aylar</option>
+                    <option value="01">Ocak</option>
+                    <option value="02">Şubat</option>
+                    <option value="03">Mart</option>
+                    <option value="04">Nisan</option>
+                    <option value="05">Mayıs</option>
+                    <option value="06">Haziran</option>
+                    <option value="07">Temmuz</option>
+                    <option value="08">Ağustos</option>
+                    <option value="09">Eylül</option>
+                    <option value="10">Ekim</option>
+                    <option value="11">Kasım</option>
+                    <option value="12">Aralık</option>
+                </select>
+
+                <button onclick="clearAllData()" class="text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 border border-rose-900/60 px-3 py-2 rounded-xl transition-colors flex items-center gap-1.5 ml-auto">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span>Tümünü Sil</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Records Table -->
+        <section class="bg-slate-800/80 border border-slate-700/80 rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-4 border-b border-slate-700/60 flex items-center justify-between no-print">
+                <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                    <i data-lucide="list" class="w-4 h-4 text-emerald-400"></i>
+                    Gönderim Kayıtları
+                </h3>
+                <span id="filteredCountText" class="text-xs text-slate-400">0 kayıt listeleniyor</span>
+            </div>
+
+            <!-- Responsive Table Container -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-300">
+                    <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-700/60">
+                        <tr>
+                            <th class="py-3 px-4">Tarih</th>
+                            <th class="py-3 px-4">Alıcı / Komisyoncu</th>
+                            <th class="py-3 px-4">Ürün</th>
+                            <th class="py-3 px-4 text-right">Kasa</th>
+                            <th class="py-3 px-4 text-right">Kilo (KG)</th>
+                            <th class="py-3 px-4 text-right">Fiyat</th>
+                            <th class="py-3 px-4 text-right">Brüt Tutar</th>
+                            <th class="py-3 px-4 text-right">Kesintiler</th>
+                            <th class="py-3 px-4 text-right">Net Tutar</th>
+                            <th class="py-3 px-4 text-center no-print">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipmentTableBody" class="divide-y divide-slate-700/40">
+                        <!-- Dynamic Rows injected via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State Message -->
+            <div id="emptyState" class="p-12 text-center text-slate-500">
+                <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-3 opacity-40"></i>
+                <p class="text-sm font-medium text-slate-400 mb-1">Henüz eklenmiş bir kayıt bulunmuyor</p>
+                <p class="text-xs text-slate-500">Yukarıdaki formu kullanarak ilk haller ürün gönderiminizi ekleyebilirsiniz.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Thermal / Printable Receipt View -->
+    <div id="printModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 text-slate-200 shadow-2xl relative">
+            <button onclick="closePrintModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white no-print">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Printable Receipt Sheet -->
+            <div id="receiptContent" class="bg-white text-black p-6 rounded-xl font-mono text-xs space-y-4 shadow-inner">
+                <div class="text-center border-b pb-3 border-gray-300">
+                    <h2 class="text-base font-bold uppercase tracking-wider text-black">HAL MÜSTAHSİL BİLDİRİMİ</h2>
+                    <p class="text-[10px] text-gray-600">Ürün Gönderim ve Sevk Fişi</p>
+                </div>
+
+                <div class="space-y-1 text-gray-700">
+                    <div class="flex justify-between">
+                        <span>Tarih:</span>
+                        <strong id="receiptDate" class="text-black">--</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Alıcı / Komisyoncu:</span>
+                        <strong id="receiptBroker" class="text-black">--</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Ürün Adı:</span>
+                        <strong id="receiptProduct" class="text-black">--</strong>
+                    </div>
+                </div>
+
+                <div class="border-t border-b py-2 border-gray-300 space-y-1">
+                    <div class="flex justify-between">
+                        <span>Kasa / Ambalaj:</span>
+                        <span id="receiptCrates">0 Adet</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Net Kilo:</span>
+                        <span id="receiptWeight">0 KG</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Birim Fiyat:</span>
+                        <span id="receiptPrice">₺0.00</span>
+                    </div>
+                    <div class="flex justify-between font-bold pt-1 border-t border-gray-200 text-black">
+                        <span>Brüt Toplam:</span>
+                        <span id="receiptGross">₺0.00</span>
+                    </div>
+                </div>
+
+                <div class="space-y-1 text-gray-600 text-[11px]">
+                    <div class="flex justify-between">
+                        <span>Komisyon / Masraf:</span>
+                        <span id="receiptExpense">-₺0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Nakliye / Hamaliye:</span>
+                        <span id="receiptTransport">-₺0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Stopaj & KDV:</span>
+                        <span id="receiptTaxes">-₺0.00</span>
+                    </div>
+                </div>
+
+                <div class="border-t-2 border-black pt-2 flex justify-between items-center text-sm font-bold text-black">
+                    <span>NET ALACAK:</span>
+                    <span id="receiptNet" class="text-base">₺0.00</span>
+                </div>
+
+                <div id="receiptNotesBox" class="text-[10px] text-gray-500 border-t pt-2 border-gray-200 italic">
+                    Not: <span id="receiptNotes">--</span>
+                </div>
+
+                <div class="text-center text-[9px] text-gray-400 pt-2 border-t border-gray-200">
+                    Sistem Tarafından Otomatik Üretilmiştir.
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="flex gap-3 mt-5 no-print">
+                <button onclick="window.print()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition-all">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    Yazdır / PDF Al
+                </button>
+                <button onclick="closePrintModal()" class="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium py-2.5 rounded-xl border border-slate-700 transition-colors">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Logic -->
+    <script>
+        // Storage Key
+        const STORAGE_KEY = 'hal_takip_data_v2';
+
+        // Main State
+        let shipments = [];
+
+        // Initialization
+        window.onload = function() {
+            // Set default date input to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('formDate').value = today;
+
+            // Load saved shipments from localStorage (Strictly NO demo data)
+            loadData();
+
+            // Initial Calculations & UI
+            calculateLivePreview();
+            lucide.createIcons();
+        };
+
+        // Load Data from LocalStorage
+        function loadData() {
+            const rawData = localStorage.getItem(STORAGE_KEY);
+            if (rawData) {
+                try {
+                    shipments = JSON.parse(rawData);
+                } catch (e) {
+                    console.error("Data parse error", e);
+                    shipments = [];
+                }
+            } else {
+                // EXPLICIT REQUIREMENT: Start with strictly EMPTY array if no storage exists
+                shipments = [];
+            }
+            renderTable();
+            updateDashboard();
+        }
+
+        // Save Data to LocalStorage
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(shipments));
+            renderTable();
+            updateDashboard();
+        }
+
+        // Live calculation for preview banner on input changes
+        function calculateLivePreview() {
+            const weight = parseFloat(document.getElementById('formWeight').value) || 0;
+            const price = parseFloat(document.getElementById('formPrice').value) || 0;
+            const expense = parseFloat(document.getElementById('formExpense').value) || 0;
+            const transport = parseFloat(document.getElementById('formTransport').value) || 0;
+            const stopajRate = parseFloat(document.getElementById('formStopaj').value) || 0;
+            const kdvRate = parseFloat(document.getElementById('formKdv').value) || 0;
+
+            const gross = weight * price;
+            const stopajVal = (gross * stopajRate) / 100;
+            const kdvVal = (gross * kdvRate) / 100;
+            const totalDeduction = expense + transport + stopajVal + kdvVal;
+            const net = gross - totalDeduction;
+
+            document.getElementById('previewGross').innerText = formatCurrency(gross);
+            document.getElementById('previewDeduction').innerText = formatCurrency(totalDeduction);
+            document.getElementById('previewNet').innerText = formatCurrency(net);
+        }
+
+        // Handle Add or Edit Form Submission
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const index = parseInt(document.getElementById('editIndex').value);
+            const date = document.getElementById('formDate').value;
+            const broker = document.getElementById('formBroker').value.trim();
+            const product = document.getElementById('formProduct').value.trim();
+            const crates = parseInt(document.getElementById('formCrates').value) || 0;
+            const weight = parseFloat(document.getElementById('formWeight').value) || 0;
+            const price = parseFloat(document.getElementById('formPrice').value) || 0;
+            const expense = parseFloat(document.getElementById('formExpense').value) || 0;
+            const transport = parseFloat(document.getElementById('formTransport').value) || 0;
+            const stopaj = parseFloat(document.getElementById('formStopaj').value) || 0;
+            const kdv = parseFloat(document.getElementById('formKdv').value) || 0;
+            const notes = document.getElementById('formNotes').value.trim();
+
+            const gross = weight * price;
+            const stopajVal = (gross * stopaj) / 100;
+            const kdvVal = (gross * kdv) / 100;
+            const totalDeductions = expense + transport + stopajVal + kdvVal;
+            const net = gross - totalDeductions;
+
+            const record = {
+                id: index >= 0 ? shipments[index].id : Date.now(),
+                date,
+                broker,
+                product,
+                crates,
+                weight,
+                price,
+                expense,
+                transport,
+                stopaj,
+                kdv,
+                gross,
+                totalDeductions,
+                net,
+                notes
+            };
+
+            if (index >= 0) {
+                shipments[index] = record;
+                showToast("Kayıt başarıyla güncellendi.");
+            } else {
+                shipments.unshift(record); // add at top
+                showToast("Yeni kayıt başarıyla eklendi.");
+            }
+
+            saveData();
+            resetForm();
+        }
+
+        // Reset Form to Initial State
+        function resetForm() {
+            document.getElementById('shipmentForm').reset();
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('submitBtnText').innerText = "Kaydet";
+            document.getElementById('formDate').value = new Date().toISOString().split('T')[0];
+            calculateLivePreview();
+        }
+
+        // Edit Record
+        function editShipment(index) {
+            const item = shipments[index];
+            if (!item) return;
+
+            document.getElementById('editIndex').value = index;
+            document.getElementById('formDate').value = item.date;
+            document.getElementById('formBroker').value = item.broker;
+            document.getElementById('formProduct').value = item.product;
+            document.getElementById('formCrates').value = item.crates || '';
+            document.getElementById('formWeight').value = item.weight;
+            document.getElementById('formPrice').value = item.price;
+            document.getElementById('formExpense').value = item.expense || '';
+            document.getElementById('formTransport').value = item.transport || '';
+            document.getElementById('formStopaj').value = item.stopaj || '';
+            document.getElementById('formKdv').value = item.kdv || '';
+            document.getElementById('formNotes').value = item.notes || '';
+
+            document.getElementById('submitBtnText').innerText = "Güncelle";
+            calculateLivePreview();
+
+            // Scroll up to form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Delete Single Record
+        function deleteShipment(index) {
+            if (confirm("Bu gönderim kaydını silmek istediğinizden emin misiniz?")) {
+                shipments.splice(index, 1);
+                saveData();
+                showToast("Kayıt silindi.");
+            }
+        }
+
+        // Delete All Records
+        function clearAllData() {
+            if (shipments.length === 0) {
+                showToast("Silinecek veri bulunmuyor.");
+                return;
+            }
+            if (confirm("TÜM KAYITLARI SİLMEK İSTEDİĞİNİZDEN EMİN MİSİNİZ?\nBu işlem geri alınamaz!")) {
+                shipments = [];
+                saveData();
+                showToast("Tüm kayıtlar temizlendi.");
+            }
+        }
+
+        // Render Table Rows based on filters and search
+        function renderTable() {
+            const tbody = document.getElementById('shipmentTableBody');
+            const emptyState = document.getElementById('emptyState');
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            const monthFilter = document.getElementById('monthFilter').value;
+
+            tbody.innerHTML = '';
+
+            let filtered = shipments.filter(item => {
+                const matchesSearch = item.broker.toLowerCase().includes(searchQuery) || 
+                                     item.product.toLowerCase().includes(searchQuery) ||
+                                     (item.notes && item.notes.toLowerCase().includes(searchQuery));
+
+                let matchesMonth = true;
+                if (monthFilter !== 'ALL') {
+                    const itemMonth = item.date.split('-')[1];
+                    matchesMonth = (itemMonth === monthFilter);
+                }
+
+                return matchesSearch && matchesMonth;
+            });
+
+            document.getElementById('filteredCountText').innerText = `${filtered.length} kayıt listeleniyor`;
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach((item, filteredIdx) => {
+                // Real index in original array
+                const realIndex = shipments.findIndex(s => s.id === item.id);
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-700/30 transition-colors border-b border-slate-700/40";
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-medium text-slate-300 whitespace-nowrap">${formatDate(item.date)}</td>
+                    <td class="py-3 px-4 font-semibold text-white whitespace-nowrap">${escapeHtml(item.broker)}</td>
+                    <td class="py-3 px-4 text-emerald-400 font-medium whitespace-nowrap">${escapeHtml(item.product)}</td>
+                    <td class="py-3 px-4 text-right">${item.crates ? item.crates + ' Kasa' : '-'}</td>
+                    <td class="py-3 px-4 text-right font-medium text-cyan-300">${item.weight.toLocaleString('tr-TR')} KG</td>
+                    <td class="py-3 px-4 text-right">${formatCurrency(item.price)}</td>
+                    <td class="py-3 px-4 text-right font-medium text-amber-300">${formatCurrency(item.gross)}</td>
+                    <td class="py-3 px-4 text-right text-rose-400">${formatCurrency(item.totalDeductions)}</td>
+                    <td class="py-3 px-4 text-right font-bold text-emerald-400">${formatCurrency(item.net)}</td>
+                    <td class="py-3 px-4 text-center no-print whitespace-nowrap">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="openPrintModal(${realIndex})" title="Yazdır / İrsaliye Bas" class="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg transition-colors">
+                                <i data-lucide="printer" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="editShipment(${realIndex})" title="Düzenle" class="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-amber-400 rounded-lg transition-colors">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteShipment(${realIndex})" title="Sil" class="p-1.5 hover:bg-slate-700 text-slate-300 hover:text-rose-400 rounded-lg transition-colors">
+                                <i data-lucide="trash" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Update Summary Dashboard Statistics
+        function updateDashboard() {
+            const count = shipments.length;
+            const totalWeight = shipments.reduce((sum, item) => sum + item.weight, 0);
+            const totalGross = shipments.reduce((sum, item) => sum + item.gross, 0);
+            const totalDeductions = shipments.reduce((sum, item) => sum + item.totalDeductions, 0);
+            const totalNet = shipments.reduce((sum, item) => sum + item.net, 0);
+
+            document.getElementById('statTotalCount').innerText = count;
+            document.getElementById('statTotalWeight').innerText = `${totalWeight.toLocaleString('tr-TR')} Kg`;
+            document.getElementById('statGrossTotal').innerText = formatCurrency(totalGross);
+            document.getElementById('statDeductions').innerText = formatCurrency(totalDeductions);
+            document.getElementById('statNetTotal').innerText = formatCurrency(totalNet);
+        }
+
+        // Print Receipt Modal Controls
+        function openPrintModal(index) {
+            const item = shipments[index];
+            if (!item) return;
+
+            const stopajVal = (item.gross * (item.stopaj || 0)) / 100;
+            const kdvVal = (item.gross * (item.kdv || 0)) / 100;
+
+            document.getElementById('receiptDate').innerText = formatDate(item.date);
+            document.getElementById('receiptBroker').innerText = item.broker;
+            document.getElementById('receiptProduct').innerText = item.product;
+            document.getElementById('receiptCrates').innerText = (item.crates || 0) + " Adet";
+            document.getElementById('receiptWeight').innerText = item.weight.toLocaleString('tr-TR') + " KG";
+            document.getElementById('receiptPrice').innerText = formatCurrency(item.price);
+            document.getElementById('receiptGross').innerText = formatCurrency(item.gross);
+            document.getElementById('receiptExpense').innerText = "-" + formatCurrency(item.expense || 0);
+            document.getElementById('receiptTransport').innerText = "-" + formatCurrency(item.transport || 0);
+            document.getElementById('receiptTaxes').innerText = "-" + formatCurrency(stopajVal + kdvVal);
+            document.getElementById('receiptNet').innerText = formatCurrency(item.net);
+
+            if (item.notes) {
+                document.getElementById('receiptNotesBox').classList.remove('hidden');
+                document.getElementById('receiptNotes').innerText = item.notes;
+            } else {
+                document.getElementById('receiptNotesBox').classList.add('hidden');
+            }
+
+            document.getElementById('printModal').classList.remove('hidden');
+        }
+
+        function closePrintModal() {
+            document.getElementById('printModal').classList.add('hidden');
+        }
+
+        // Backup to JSON file
+        function exportJSON() {
+            if (shipments.length === 0) {
+                showToast("Dışa aktarılacak veri bulunamadı.");
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(shipments, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `hal_takip_yedek_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
+            showToast("JSON yedeği başarıyla indirildi.");
+        }
+
+        // Import from JSON file
+        function importJSON(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        shipments = importedData;
+                        saveData();
+                        showToast("Yedek başarıyla yüklendi.");
+                    } else {
+                        alert("Geçersiz yedek dosyası formatı!");
+                    }
+                } catch (err) {
+                    alert("Dosya okunamadı veya bozuk format!");
+                }
+            };
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0]);
+            }
+        }
+
+        // Export to Excel / CSV
+        function exportCSV() {
+            if (shipments.length === 0) {
+                showToast("İndirilecek veri bulunmuyor.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // UTF-8 BOM for Excel Turkish character support
+            csvContent += "Tarih;Alıcı;Ürün;Kasa Sayısı;Kilo (KG);Birim Fiyat;Brüt Tutar;Kesintiler Toplamı;Net Tutar;Notlar\n";
+
+            shipments.forEach(item => {
+                const row = [
+                    item.date,
+                    `"${item.broker}"`,
+                    `"${item.product}"`,
+                    item.crates || 0,
+                    item.weight,
+                    item.price,
+                    item.gross,
+                    item.totalDeductions,
+                    item.net,
+                    `"${item.notes || ''}"`
+                ].join(";");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `hal_raporu_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            showToast("Excel (CSV) dosyası indirildi.");
+        }
+
+        // Helpers
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(amount || 0);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            if (parts.length === 3) {
+                return `${parts[2]}.${parts[1]}.${parts[0]}`;
+            }
+            return dateStr;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
